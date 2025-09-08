@@ -19,11 +19,11 @@ parser.add_argument('--target_root_path1', type=str,
 parser.add_argument('--target_root_path2', type=str,
                     default='/data/weizhikai/data/dataset/ultrasound/BUS/STU/BUSI', help='root dir2 for test data2')
 
-parser.add_argument('--output', type=str, default='./output/2025-02/11/USDG-FAN3')
+parser.add_argument('--output', type=str, default='./output/bus')
 
 parser.add_argument('--Source_Dataset', type=str, default='BUSI',
                     help='BUSI')
-parser.add_argument('--Target_Dataset', nargs='+', type=str, default=['DatasetB','STU','BUSI'],
+parser.add_argument('--Target_Dataset', nargs='+', type=str, default=['DatasetB','STU'],
                     help='BUSI/DatasetB/STU')
 
 parser.add_argument('--num_classes', type=int,

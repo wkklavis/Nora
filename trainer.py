@@ -17,8 +17,6 @@ from test import inference
 from utils import dice_coeff, bce_loss
 
 
-
-
 def calc_loss(outputs, label_batch, ce_loss, dice_loss, dice_weight:float=0.8):
     logits = outputs['masks']
     pred = torch.nn.Sigmoid()(logits)
@@ -40,21 +38,15 @@ def trainer_busi(args, model, snapshot_path, multimask_output, low_res):
     base_lr = args.base_lr
     num_classes = args.num_classes
     batch_size = args.batch_size * args.n_gpu
-    # max_iterations = args.max_iterations
 
     train_joint_transform = joint_transforms.Compose([
         joint_transforms.To_PIL_Image(),
         joint_transforms.RandomAffine(0, translate=(0.125, 0.125)),
         joint_transforms.RandomHorizontallyFlip(),
-        #joint_transforms.RandomRotate((-30, 30)),
         joint_transforms.FixResize(args.img_size)
     ])
     transform = transforms.Compose([
-        # transforms.RandomContrast(0.5),
-        # transforms.RandomGammaEnhancement(0.5),
-        # transforms.RandomGaussianBlur(),
         transforms.to_Tensor(),
-        # standard_augment.normalize([cfg.DATASET.MEAN], [cfg.DATASET.STD])
     ])
     target_transform = transforms.Compose([
         transforms.to_Tensor()])
@@ -122,7 +114,6 @@ def trainer_busi(args, model, snapshot_path, multimask_output, low_res):
     stop_epoch = args.stop_epoch
     max_iterations = args.max_epochs * len(trainloader)  # max_epoch = max_iterations // len(trainloader) + 1
     logging.info("{} iterations per epoch. {} max iterations ".format(len(trainloader), max_iterations))
-    best_performance = 0.0
     iterator = (range(max_epoch))
     for epoch_num in iterator:
         logging.info('Epoch %d / %d' % (epoch_num, max_epoch))
@@ -134,7 +125,6 @@ def trainer_busi(args, model, snapshot_path, multimask_output, low_res):
 
             outputs = model(x, multimask_output, args.img_size)
             loss, loss_ce, loss_dice = calc_loss(outputs, y, ce_loss, dice_loss, args.dice_param)
-
 
             optimizer.zero_grad()
             loss.backward()
@@ -160,26 +150,18 @@ def trainer_busi(args, model, snapshot_path, multimask_output, low_res):
             writer.add_scalar('info/loss_dice', loss_dice, iter_num)
             logging.info('iteration %d : loss : %f, loss_ce: %f, loss_dice: %f, lr: %f' % (iter_num, loss.item(), loss_ce.item(), loss_dice.item(), lr_))
 
-        save_interval = 20 # int(max_epoch/6)
+        save_interval = 20
         if (epoch_num + 1) % save_interval == 0:
             #test
             dice0, asd0 = inference(args=args, epoch=epoch_num, snapshot_path=snapshot_path, test_loader=testloader[0], model=model, dataset_name=target_name[0])
             dice1, asd1 = inference(args=args, epoch=epoch_num, snapshot_path=snapshot_path, test_loader=testloader[1], model=model, dataset_name=target_name[1])
             dice2, asd2 = inference(args=args, epoch=epoch_num, snapshot_path=snapshot_path, test_loader=testloader[2], model=model, dataset_name=target_name[2])
-            if dice0 > 0.8300 and dice1 > 0.8920 and dice2 > 0.7800:
-                #save model
-                save_mode_path = os.path.join(snapshot_path, 'bus_weight.pth')
-                torch.save(model.state_dict(), save_mode_path)
-                logging.info("save model to {}".format(save_mode_path))
 
         if epoch_num >= max_epoch - 1 or epoch_num >= stop_epoch - 1:
-
-            #test
-
-            # save model
-            # save_mode_path = os.path.join(snapshot_path, 'epoch_' + str(epoch_num) + '.pth')
-            # torch.save(model.state_dict(), save_mode_path)
-            # logging.info("save model to {}".format(save_mode_path))
+            #save model
+            save_mode_path = os.path.join(snapshot_path, 'bus_weight.pth')
+            torch.save(model.state_dict(), save_mode_path)
+            logging.info("save model to {}".format(save_mode_path))
             break
 
     writer.close()
@@ -199,21 +181,15 @@ def trainer_thyroid(args, model, snapshot_path, multimask_output, low_res):
     base_lr = args.base_lr
     num_classes = args.num_classes
     batch_size = args.batch_size * args.n_gpu
-    # max_iterations = args.max_iterations
 
     train_joint_transform = joint_transforms.Compose([
         joint_transforms.To_PIL_Image(),
         joint_transforms.RandomAffine(0, translate=(0.125, 0.125)),
         joint_transforms.RandomHorizontallyFlip(),
-        #joint_transforms.RandomRotate((-30, 30)),
         joint_transforms.FixResize(args.img_size)
     ])
     transform = transforms.Compose([
-        # transforms.RandomContrast(0.5),
-        # transforms.RandomGammaEnhancement(0.5),
-        # transforms.RandomGaussianBlur(),
         transforms.to_Tensor(),
-        # standard_augment.normalize([cfg.DATASET.MEAN], [cfg.DATASET.STD])
     ])
     target_transform = transforms.Compose([
         transforms.to_Tensor()])
@@ -277,7 +253,6 @@ def trainer_thyroid(args, model, snapshot_path, multimask_output, low_res):
     stop_epoch = args.stop_epoch
     max_iterations = args.max_epochs * len(trainloader)  # max_epoch = max_iterations // len(trainloader) + 1
     logging.info("{} iterations per epoch. {} max iterations ".format(len(trainloader), max_iterations))
-    best_performance = 0.0
     iterator = (range(max_epoch))
     for epoch_num in iterator:
         logging.info('Epoch %d / %d' % (epoch_num, max_epoch))
@@ -289,7 +264,6 @@ def trainer_thyroid(args, model, snapshot_path, multimask_output, low_res):
 
             outputs = model(x, multimask_output, args.img_size)
             loss, loss_ce, loss_dice = calc_loss(outputs, y, ce_loss, dice_loss, args.dice_param)
-
 
             optimizer.zero_grad()
             loss.backward()
@@ -320,25 +294,16 @@ def trainer_thyroid(args, model, snapshot_path, multimask_output, low_res):
             #test
             dice0, asd0 = inference(args=args, epoch=epoch_num, snapshot_path=snapshot_path, test_loader=testloader[0], model=model, dataset_name=target_name[0])
             dice1, asd1 = inference(args=args, epoch=epoch_num, snapshot_path=snapshot_path, test_loader=testloader[1], model=model, dataset_name=target_name[1])
-            if dice0 > 0.7750:
-                #save model
-                save_mode_path = os.path.join(snapshot_path, 'thyroid_weight.pth')
-                torch.save(model.state_dict(), save_mode_path)
-                logging.info("save model to {}".format(save_mode_path))
 
         if epoch_num >= max_epoch - 1 or epoch_num >= stop_epoch - 1:
-
-            #test
-
-            # save model
-            # save_mode_path = os.path.join(snapshot_path, 'epoch_' + str(epoch_num) + '.pth')
-            # torch.save(model.state_dict(), save_mode_path)
-            # logging.info("save model to {}".format(save_mode_path))
+            #save model
+            save_mode_path = os.path.join(snapshot_path, 'thyroid_weight.pth')
+            torch.save(model.state_dict(), save_mode_path)
+            logging.info("save model to {}".format(save_mode_path))
             break
 
     writer.close()
     return "Training Finished!"
-
 
 
 def trainer_myo(args, model, snapshot_path, multimask_output, low_res):
@@ -354,21 +319,15 @@ def trainer_myo(args, model, snapshot_path, multimask_output, low_res):
     base_lr = args.base_lr
     num_classes = args.num_classes
     batch_size = args.batch_size * args.n_gpu
-    # max_iterations = args.max_iterations
 
     train_joint_transform = joint_transforms.Compose([
         joint_transforms.To_PIL_Image(),
         joint_transforms.RandomAffine(0, translate=(0.125, 0.125)),
         joint_transforms.RandomHorizontallyFlip(),
-        #joint_transforms.RandomRotate((-30, 30)),
         joint_transforms.FixResize(args.img_size)
     ])
     transform = transforms.Compose([
-        # transforms.RandomContrast(0.5),
-        # transforms.RandomGammaEnhancement(0.5),
-        # transforms.RandomGaussianBlur(),
         transforms.to_Tensor(),
-        # standard_augment.normalize([cfg.DATASET.MEAN], [cfg.DATASET.STD])
     ])
     target_transform = transforms.Compose([
         transforms.to_Tensor()])
@@ -429,7 +388,6 @@ def trainer_myo(args, model, snapshot_path, multimask_output, low_res):
     stop_epoch = args.stop_epoch
     max_iterations = args.max_epochs * len(trainloader)  # max_epoch = max_iterations // len(trainloader) + 1
     logging.info("{} iterations per epoch. {} max iterations ".format(len(trainloader), max_iterations))
-    best_performance = 0.0
     iterator = (range(max_epoch))
     for epoch_num in iterator:
         logging.info('Epoch %d / %d' % (epoch_num, max_epoch))
@@ -441,7 +399,6 @@ def trainer_myo(args, model, snapshot_path, multimask_output, low_res):
 
             outputs = model(x, multimask_output, args.img_size)
             loss, loss_ce, loss_dice = calc_loss(outputs, y, ce_loss, dice_loss, args.dice_param)
-
 
             optimizer.zero_grad()
             loss.backward()
@@ -471,20 +428,12 @@ def trainer_myo(args, model, snapshot_path, multimask_output, low_res):
         if (epoch_num + 1) % save_interval == 0:
             #test
             dice0, asd0 = inference(args=args, epoch=epoch_num, snapshot_path=snapshot_path, test_loader=testloader[0], model=model, dataset_name=target_name[0])
-            if dice0 > 0.7770:
-                #save model
-                save_mode_path = os.path.join(snapshot_path, 'myo_weight.pth')
-                torch.save(model.state_dict(), save_mode_path)
-                logging.info("save model to {}".format(save_mode_path))
 
         if epoch_num >= max_epoch - 1 or epoch_num >= stop_epoch - 1:
-
-            #test
-
-            # save model
-            # save_mode_path = os.path.join(snapshot_path, 'epoch_' + str(epoch_num) + '.pth')
-            # torch.save(model.state_dict(), save_mode_path)
-            # logging.info("save model to {}".format(save_mode_path))
+            #save model
+            save_mode_path = os.path.join(snapshot_path, 'myo_weight.pth')
+            torch.save(model.state_dict(), save_mode_path)
+            logging.info("save model to {}".format(save_mode_path))
             break
 
     writer.close()

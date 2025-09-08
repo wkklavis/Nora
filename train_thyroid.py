@@ -18,12 +18,12 @@ parser.add_argument('--train_list_path', type=str,
 parser.add_argument('--target_root_path', type=str,
                     default='/data/weizhikai/data/dataset/ultrasound/Thyroid/DDTI dataset/DDTI/2_preprocessed_data/stage2', help='root dir2 for test data2')
 
-parser.add_argument('--output', type=str, default='./output/12-thy/27/nora7')
+parser.add_argument('--output', type=str, default='./output/thyroid')
 
 
 parser.add_argument('--Source_Dataset', type=str, default='TN3K',
                     help='TN3K')
-parser.add_argument('--Target_Dataset', nargs='+', type=str, default=['DDTI', 'TN3K'],
+parser.add_argument('--Target_Dataset', nargs='+', type=str, default=['DDTI'],
                     help='TN3K/DDTI')
 
 parser.add_argument('--num_classes', type=int,

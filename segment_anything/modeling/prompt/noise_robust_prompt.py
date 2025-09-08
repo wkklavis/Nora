@@ -1,14 +1,12 @@
 import numpy as np
 import torch
 from torch import nn
-from typing import Any, Optional, Tuple, Type
+from typing import Any, Optional, Tuple
 import torch.nn.functional as F
 from functools import reduce
 from operator import mul
-from segment_anything.modeling.common import LayerNorm2d
 import math
 device = "cuda" if torch.cuda.is_available() else "cpu"
-from sklearn.decomposition import PCA
 
 class PositionEmbeddingRandom(nn.Module):
     """

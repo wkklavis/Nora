@@ -8,7 +8,7 @@ from typing import Type
 
 from numpy import random
 
-from segment_anything.modeling.adapter.DistributionUncertainty import DistributionUncertainty, DistributionNoise
+from segment_anything.modeling.adapter.DistributionNoise import DistributionUncertainty, DistributionNoise
 from segment_anything.modeling.adapter.Separate import Separate
 
 

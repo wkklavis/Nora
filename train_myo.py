@@ -18,7 +18,7 @@ parser.add_argument('--train_list_path', type=str,
 parser.add_argument('--target_root_path', type=str,
                     default='/data/weizhikai/data/dataset/ultrasound/MYO/HMC-QU', help='root dir2 for test data2')
 
-parser.add_argument('--output', type=str, default='./output/2025-01-myo/01/Nora7')
+parser.add_argument('--output', type=str, default='./output/myo')
 
 
 parser.add_argument('--Source_Dataset', type=str, default='CAMUS3K',
