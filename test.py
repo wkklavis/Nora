@@ -39,9 +39,6 @@ def inference(args, epoch, snapshot_path, test_loader, model, dataset_name=''):
             output_masks = outputs['masks']
             net_out = output_masks>0
             pred = net_out.float().int()
-            # net_out = F.softmax(output_masks, dim=1)
-            # pred = torch.max(net_out, 1)[1]
-            # lb = lb.squeeze(0)
             pred = np.array(pred.cpu(), dtype=np.uint8)
             lb = np.array(lb.cpu(), dtype=np.uint8)
 
@@ -52,13 +49,6 @@ def inference(args, epoch, snapshot_path, test_loader, model, dataset_name=''):
 
             if pred.sum() == 0 or lb.sum() == 0:
                 ignore += 1
-
-            # output_path = os.path.join(snapshot_path, 'saved_imges')
-            # if not os.path.exists(output_path):
-            #     os.makedirs(output_path)
-            # draw_output = (pred * 255).astype(np.uint8)
-            #
-            # cv2.imwrite(output_path + '/' + str(data['name']) + '_pred.png',draw_output[0][0])
 
     # Calculate the metrics
     Dice = dice_all / num
