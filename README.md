@@ -2,7 +2,7 @@
 This is the official code of our MICCAI 2025 paper Nora 🥳
 
 <div align=center>
-	<img src="figures/pipeline.png" width=75%/>
+	<img src="figures/Pipeline.png" width=75%/>
 </div>
 
 
